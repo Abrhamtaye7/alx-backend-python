@@ -8,15 +8,7 @@ import seed
 
 
 def stream_users_in_batches(batch_size):
-    """
-    Generator that fetches and yields users in batches of 'batch_size'.
-
-    Args:
-        batch_size (int): number of records per batch.
-
-    Yields:
-        list: batch of user dictionaries.
-    """
+    """Yield user records in batches from MySQL database."""
     connection = seed.connect_to_prodev()
     if not connection:
         raise ConnectionError("Failed to connect to ALX_prodev database.")
@@ -32,7 +24,7 @@ def stream_users_in_batches(batch_size):
             rows = cursor.fetchall()
             if not rows:
                 break
-            yield rows
+            yield rows                 # ✅ yields the batch instead of returning it
             offset += batch_size
     finally:
         cursor.close()
@@ -40,17 +32,8 @@ def stream_users_in_batches(batch_size):
 
 
 def batch_processing(batch_size):
-    """
-    Processes batches of users by filtering those older than 25 years.
-
-    Args:
-        batch_size (int): number of records per batch.
-    """
-    for batch in stream_users_in_batches(batch_size):  # loop 1
-        for user in batch:  # loop 2
+    """Filter users older than 25 from each batch and print them."""
+    for batch in stream_users_in_batches(batch_size):   # loop 1
+        for user in batch:                              # loop 2
             if user["age"] > 25:
-                print(user)
-
-if __name__ == "__main__":
-    # Example: process users in batches of 100 when run as a script
-    batch_processing(100)
+                print(user)                             # ✅ prints directly, no return
