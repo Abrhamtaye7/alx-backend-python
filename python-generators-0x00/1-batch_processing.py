@@ -50,3 +50,7 @@ def batch_processing(batch_size):
         for user in batch:  # loop 2
             if user["age"] > 25:
                 print(user)
+
+if __name__ == "__main__":
+    # Example: process users in batches of 100 when run as a script
+    batch_processing(100)
