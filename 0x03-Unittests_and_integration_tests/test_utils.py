@@ -17,6 +17,14 @@ class TestAccessNestedMap(unittest.TestCase):
     def test_access_nested_map(self, nested_map, path, expected):
         """Test that access_nested_map returns expected results"""
         self.assertEqual(access_nested_map(nested_map, path), expected)
+def my_decorator(func):
+    def wrapper(*args, **kwargs):
+        # Do something before
+        result = func(*args, **kwargs)  # Make sure to call the original function
+        # Do something after
+        return result  # <- you must return the original function result
+    return wrapper
+
 
 
 if __name__ == "__main__":
