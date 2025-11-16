@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unit tests for utils.py functions"""
+"""Unit tests for utils.py functions: access_nested_map, get_json, memoize"""
 
 import unittest
 from parameterized import parameterized
@@ -39,7 +39,7 @@ class TestGetJson(unittest.TestCase):
     ])
     @patch("utils.requests.get")
     def test_get_json(self, test_url, test_payload, mock_get):
-        """Test that get_json returns expected payload without real HTTP requests"""
+        """Test get_json returns expected payload without HTTP requests"""
         mock_get.return_value = Mock()
         mock_get.return_value.json.return_value = test_payload
 
@@ -52,7 +52,7 @@ class TestMemoize(unittest.TestCase):
     """Test memoize decorator"""
 
     def test_memoize(self):
-        """Test that a memoized method caches result and only calls once"""
+        """Test that memoized method caches result and calls original once"""
 
         class TestClass:
             def a_method(self):
@@ -64,10 +64,11 @@ class TestMemoize(unittest.TestCase):
 
         obj = TestClass()
         with patch.object(obj, "a_method", return_value=42) as mock_method:
-            # Call twice
-            self.assertEqual(obj.a_property(), 42)
-            self.assertEqual(obj.a_property(), 42)
-            # Original method should be called only once
+            # Access the memoized property twice
+            self.assertEqual(obj.a_property, 42)
+            self.assertEqual(obj.a_property, 42)
+
+            # Original method should only be called once
             mock_method.assert_called_once()
 
 
