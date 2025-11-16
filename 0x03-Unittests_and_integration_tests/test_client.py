@@ -6,28 +6,38 @@ from parameterized import parameterized, parameterized_class
 from unittest.mock import patch, Mock
 from client import GithubOrgClient
 import fixtures  # integration test payloads
+from utils import get_json
+
+
+class GithubOrgClient:
+    @property
+    def org(self):
+        return get_json(f"https://api.github.com/orgs/{self.org_name}")
+
 
 
 class TestGithubOrgClient(unittest.TestCase):
     """Unit tests for GithubOrgClient"""
 
     @parameterized.expand([
-        ("google",),
-        ("abc",)
-    ])
-    @patch("client.get_json")
+    ("google",),
+    ("abc",)
+])
+    @patch("client.get_json")  # patch where it's looked up
     def test_org(self, org_name, mock_get_json):
-        """Test org property returns correct payload"""
-        expected_payload = {"login": org_name}
-        mock_get_json.return_value = expected_payload
+            """Test org property returns correct payload"""
+            expected_payload = {"login": org_name}
+            mock_get_json.return_value = expected_payload
 
-        client = GithubOrgClient(org_name)
-        result = client.org
+            client = GithubOrgClient(org_name)
+            result = client.org  # property access
 
-        self.assertEqual(result, expected_payload)
-        mock_get_json.assert_called_once_with(
-            f"https://api.github.com/orgs/{org_name}"
-        )
+            # Validate output
+            self.assertEqual(result, expected_payload)
+            mock_get_json.assert_called_once_with(
+                f"https://api.github.com/orgs/{org_name}"
+            )
+
 
     def test_public_repos_url(self):
         """Test _public_repos_url returns the correct URL"""
