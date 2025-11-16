@@ -1,33 +1,26 @@
-#!/usr/bin/env python3
-"""
-Unit and integration tests for GithubOrgClient.
-"""
-import unittest
-from unittest.mock import patch, PropertyMock
-from parameterized import parameterized, parameterized_class
+from unittest import TestCase
+from unittest.mock import patch
+from parameterized import parameterized
 from client import GithubOrgClient
-from fixtures import org_payload, repos_payload
-from fixtures import expected_repos, apache2_repos
 
 
-
-class TestGithubOrgClient(unittest.TestCase):
-    """Unit tests for GithubOrgClient"""
+class TestGithubOrgClient(TestCase):
+    """Task 4: Test GithubOrgClient.org method."""
 
     @parameterized.expand([
         ("google",),
-        ("abc",),
+        ("abc",)
     ])
     @patch("client.get_json")
     def test_org(self, org_name, mock_get_json):
-        """Test org property returns correct payload"""
-        payload = {"login": org_name}
-        mock_get_json.return_value = payload
+        """Test org returns the correct value."""
+        mock_get_json.return_value = {"login": org_name}
         client = GithubOrgClient(org_name)
-        self.assertEqual(client.org, payload)
+        self.assertEqual(client.org, {"login": org_name})
         mock_get_json.assert_called_once_with(
             f"https://api.github.com/orgs/{org_name}"
         )
+
 
     def test_public_repos_url(self):
         """Test correct repos_url from org payload"""
