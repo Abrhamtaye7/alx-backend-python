@@ -5,11 +5,11 @@ import unittest
 from parameterized import parameterized, parameterized_class
 from unittest.mock import patch, Mock
 from client import GithubOrgClient
-import fixtures  # Contains integration test payloads
+import fixtures  # integration test payloads
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Unit tests for GithubOrgClient methods"""
+    """Unit tests for GithubOrgClient"""
 
     @parameterized.expand([
         ("google",),
@@ -37,16 +37,14 @@ class TestGithubOrgClient(unittest.TestCase):
 
         with patch.object(GithubOrgClient, "org", new_callable=Mock) as mock_org:
             mock_org.return_value = fake_payload
-            self.assertEqual(client._public_repos_url, fake_payload["repos_url"])
+            result = client._public_repos_url
+            self.assertEqual(result, fake_payload["repos_url"])
 
     @patch("client.get_json")
     def test_public_repos(self, mock_get_json):
         """Test public_repos returns list of repo names"""
         client = GithubOrgClient("org")
-        mock_get_json.return_value = [
-            {"name": "repo1"},
-            {"name": "repo2"}
-        ]
+        mock_get_json.return_value = [{"name": "repo1"}, {"name": "repo2"}]
 
         with patch.object(GithubOrgClient, "_public_repos_url", new_callable=Mock) \
                 as mock_url:
@@ -85,7 +83,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         """Set up class-level patchers"""
         cls.get_patcher = patch("client.requests.get", autospec=True)
         cls.mock_get = cls.get_patcher.start()
-        # Setup side_effect to return org_payload first, then repos_payload
         cls.mock_get.return_value.json.side_effect = [
             cls.org_payload,
             cls.repos_payload
