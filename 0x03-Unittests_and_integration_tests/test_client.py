@@ -10,25 +10,43 @@ from client import GithubOrgClient
 class TestGithubOrgClient(unittest.TestCase):
     """Test GithubOrgClient methods"""
 
-    @parameterized.expand([
-        ("google",),
-        ("abc",)
-    ])
-    @patch("client.get_json")
-    def test_org(self, org_name, mock_get_json):
-        """Test GithubOrgClient.org returns correct value"""
-        # Mock return value
-        expected_payload = {"login": org_name}
-        mock_get_json.return_value = expected_payload
 
-        client = GithubOrgClient(org_name)
-        result = client.org
+@parameterized.expand([
+    ("google",),
+    ("abc",)
+])
+@patch("client.get_json")  # must patch where it's used
+def test_org(self, org_name, mock_get_json):
+    expected_payload = {"login": org_name}
+    mock_get_json.return_value = expected_payload
 
-        self.assertEqual(result, expected_payload)
-        mock_get_json.assert_called_once_with(
-            f"https://api.github.com/orgs/{org_name}"
-        )
+    client = GithubOrgClient(org_name)
+    result = client.org  # access property, no parentheses
+
+    self.assertEqual(result, expected_payload)
+    mock_get_json.assert_called_once_with(
+        f"https://api.github.com/orgs/{org_name}"
+    )
 
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+@parameterized.expand([
+    ("google",),
+    ("abc",)
+])
+@patch("client.get_json")  # must patch where it's used
+def test_org(self, org_name, mock_get_json):
+    expected_payload = {"login": org_name}
+    mock_get_json.return_value = expected_payload
+
+    client = GithubOrgClient(org_name)
+    result = client.org  # access property, no parentheses
+
+    self.assertEqual(result, expected_payload)
+    mock_get_json.assert_called_once_with(
+        f"https://api.github.com/orgs/{org_name}"
+    )
