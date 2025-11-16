@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
-"""
-Test module for client.GithubOrgClient.
-Covers tasks 4–8: parameterized tests, patching, mocking properties,
-and integration tests using fixtures.
-"""
+"""Tests for GithubOrgClient.org"""
 import unittest
-from unittest.mock import patch, PropertyMock
-from parameterized import parameterized, parameterized_class
+from unittest.mock import patch
+from parameterized import parameterized
 from client import GithubOrgClient
-from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
-
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Unit tests for GithubOrgClient"""
+    """Test GithubOrgClient.org method"""
 
     @parameterized.expand([
         ("google",),
@@ -20,14 +14,20 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     @patch("client.get_json")
     def test_org(self, org_name, mock_get_json):
-        """Test that GithubOrgClient.org returns correct value"""
-        test_payload = {"login": org_name}
-        mock_get_json.return_value = test_payload
+        """Test that org returns correct payload"""
+        expected_payload = {"login": org_name}
+        mock_get_json.return_value = expected_payload
 
         client = GithubOrgClient(org_name)
-        self.assertEqual(client.org, test_payload)
-        mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
+        self.assertEqual(client.org, expected_payload)
 
+        mock_get_json.assert_called_once_with(
+            f"https://api.github.com/orgs/{org_name}"
+        )
+
+if __name__ == "__main__":
+    unittest.main()
+    
     def test_public_repos_url(self):
         """Test _public_repos_url returns expected URL"""
         with patch("client.GithubOrgClient.org", new_callable=PropertyMock) as mock_org:
