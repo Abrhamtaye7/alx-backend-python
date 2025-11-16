@@ -1,12 +1,33 @@
 #!/usr/bin/env python3
-#!/usr/bin/env python3
+"""Fixtures for testing the GithubOrgClient.
+"""
 
-# Extract data from your current TEST_PAYLOAD tuple
+# Define the full payload needed for the integration tests
+TEST_PAYLOAD = [
+    (
+        # org_payload (e.g., Google's Org)
+        {"repos_url": "https://api.github.com/orgs/google/repos"},
+        # repos_payload (List of repos returned by repos_url)
+        [
+            {"name": "episodes.dart", "license": {"key": "apache-2.0"}},
+            {"name": "Googler", "license": {"key": "mit"}},
+            {"name": "google", "license": {"key": "apache-2.0"}},
+            {"name": "googlestudios", "license": None},
+        ],
+        # expected_repos (Names of all repos)
+        ["episodes.dart", "Googler", "google", "googlestudios"],
+        # apache2_repos (Names of repos with "apache-2.0" license)
+        ["episodes.dart", "google"],
+    ),
+]
+
+# The following lines are likely what caused the original error, as they
+# try to access the elements of TEST_PAYLOAD *outside* the parameterized class.
+# If your fixtures.py has these lines, they should be removed or defined like this:
 org_payload = TEST_PAYLOAD[0][0]
 repos_payload = TEST_PAYLOAD[0][1]
 expected_repos = TEST_PAYLOAD[0][2]
 apache2_repos = TEST_PAYLOAD[0][3]
-
 
 TEST_PAYLOAD = [
   (
