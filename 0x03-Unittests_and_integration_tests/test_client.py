@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 from unittest import TestCase
 from unittest.mock import patch
-from parameterized import parameterized
+import unittest
 from client import GithubOrgClient
+import unittest
+from unittest.mock import patch, PropertyMock
+from parameterized import parameterized, parameterized_class  # <-- make sure this is here
+from client import GithubOrgClient
+from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
+
 
 
 class TestGithubOrgClient(TestCase):
