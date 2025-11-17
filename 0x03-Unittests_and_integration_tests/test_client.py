@@ -66,23 +66,31 @@ class TestGithubOrgClient(unittest.TestCase):
 
     # ---------------- Task 7 ----------------
     @parameterized.expand([
-        ({"license": {"key": "my_license"}}, "my_license", True),
-        ({"license": {"key": "other_license"}}, "my_license", False),
-    ])
+    ({"license": {"key": "my_license"}}, "my_license", True),
+    ({"license": {"key": "other_license"}}, "my_license", False),
+])
     def test_has_license(self, repo, license_key, expected):
-        """Test has_license static method."""
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
 
+@parameterized.expand([
+    ("matching_license", {"license": {"key": "my_license"}}, "my_license", True),
+    ("non_matching_license", {"license": {"key": "other_license"}}, "my_license", False),
+])
+def test_has_license(self, name, repo, license_key, expected):
+    result = GithubOrgClient.has_license(repo, license_key)
+    self.assertEqual(result, expected)
+
 
 # ---------------- Task 8 ----------------
+    
+from fixtures import TEST_PAYLOAD as fixtures
 @parameterized_class(
     ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
     [(org_payload, repos_payload, expected_repos, apache2_repos)]
-)
+    )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
-    """Integration tests for GithubOrgClient.public_repos."""
-
+    """Integration tests for GithubOrgClient class."""
     @classmethod
     def setUpClass(cls):
         """Setup mock for requests.get."""
@@ -112,6 +120,19 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
         apache_repos = client.public_repos("apache-2.0")
         self.assertEqual(apache_repos, self.apache2_repos)
+@classmethod
+def setUpClass(cls):
+    """Setup mock for requests.get."""
+    cls.get_patcher = patch("utils.requests.get")
+    cls.mock_get = cls.get_patcher.start()
+    cls.get_patcher = cls.get_patcher  # ensure patcher itself is assigned
+
+def setUp(self):
+    self.get_patcher = patch("utils.requests.get")
+    self.mock_get = self.get_patcher.start()
+def tearDown(self):
+    self.get_patcher.stop()
+
 
 
 if __name__ == "__main__":
