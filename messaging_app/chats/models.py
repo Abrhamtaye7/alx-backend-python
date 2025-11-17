@@ -1,59 +1,71 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
 import uuid
-from django.contrib.auth.models import AbstractUser, Group, Permission
-from django.db import models
 
+# Custom User model
 class User(AbstractUser):
-    # UUID primary key
-    user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
-    # Explicitly declare fields to satisfy checks
-    first_name = models.CharField(max_length=150, blank=False)
-    last_name = models.CharField(max_length=150, blank=False)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)  # Django default hash length
-
-    # Extra fields
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
-
-    ROLE_CHOICES = (
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)  # user_id
+    email = models.EmailField(unique=True, db_index=True)
+    phone_number = models.CharField(max_length=32, null=True, blank=True)
+    ROLE_CHOICES = [
         ('guest', 'Guest'),
         ('host', 'Host'),
         ('admin', 'Admin'),
-    )
+    ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='guest')
+    # Optional separate password_hash if explicitly required (Django already stores hashed password in `password`)
+    password_hash = models.CharField(max_length=256)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    # Override authentication fields
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+    username = models.CharField(max_length=150, unique=True, blank=True, null=True)
 
-    # Avoid clashes with auth.User
-    groups = models.ManyToManyField(
-        Group,
-        related_name='custom_user_set',
-        blank=True,
-        help_text='The groups this user belongs to.'
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        related_name='custom_user_permissions_set',
-        blank=True,
-        help_text='Specific permissions for this user.'
-    )
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
+    USERNAME_FIELD = 'username'  # or switch to email if desired
+
+    def save(self, *args, **kwargs):
+        # Keep password_hash synced with Django's password field
+        if self.password and self.password_hash != self.password:
+            self.password_hash = self.password
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.email}"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['email']),
+        ]
+
+
+# Conversation model
 class Conversation(models.Model):
-    conversation_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)  # conversation_id
     participants = models.ManyToManyField(User, related_name='conversations')
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
-        return f"Conversation {self.conversation_id}"
+        return f"Conversation {self.id}"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['id']),
+        ]
+
+
+# Message model
 class Message(models.Model):
-    message_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)  # message_id
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
     message_body = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
-        return f"Message {self.message_id} from {self.sender.email}"
+        return f"Msg {self.id} by {self.sender_id}"
+
+    class Meta:
+        ordering = ['-sent_at']
+        indexes = [
+            models.Index(fields=['sender']),
+            models.Index(fields=['conversation']),
+        ]
