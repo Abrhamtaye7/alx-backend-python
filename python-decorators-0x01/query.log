@@ -1,0 +1,8 @@
+[2025-11-03 20:25:11] fetch_all_users: SELECT * FROM users
+[2025-11-03 20:25:15] fetch_all_users: SELECT * FROM users
+[2025-11-03 20:25:17] fetch_all_users: SELECT * FROM users
+[2025-11-03 20:25:18] fetch_all_users: SELECT * FROM users
+[2025-11-03 20:28:18] fetch_all_users: SELECT * FROM users
+[2025-11-03 20:29:01] fetch_all_users: SELECT * FROM users
+[2025-11-03 20:29:54] fetch_all_users: SELECT * FROM users
+[2025-11-03 20:51:19] fetch_all_users: SELECT * FROM users

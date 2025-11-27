@@ -15,7 +15,7 @@ from .filters import MessageFilter
 class UserViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication, SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticatedUser]
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('user_id')
     serializer_class = UserSerializer
     filter_backends = [filters.OrderingFilter]  
 

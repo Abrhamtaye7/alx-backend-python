@@ -53,9 +53,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'chats.middleware.RequestLoggingMiddleware',  # Custom middleware for logging requests
+    'chats.middleware.RestrictAccessByTimeMiddleware',  # Custom middleware for time-based access restriction
+    'chats.middleware.OffensiveLanguageMiddleware',  # Custom middleware for limiting the number of messages per min
+    'chats.middleware.RolepermissionMiddleware',  # Custom middleware for role-based access control
 ]
 
-ROOT_URLCONF = 'messaging_app.urls'
+ROOT_URLCONF = 'Django-Middleware-0x03.urls'
 
 TEMPLATES = [
     {
@@ -72,7 +76,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'messaging_app.wsgi.application'
+WSGI_APPLICATION = 'Django-Middleware-0x03.wsgi.application'
 
 
 # Database
@@ -152,3 +156,4 @@ SIMPLE_JWT = {
     # Use user_id as the identifier in the JWT token instead of default 'id'
     'USER_ID_FIELD': 'user_id',
 }
+
