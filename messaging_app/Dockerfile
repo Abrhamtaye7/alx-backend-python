@@ -16,8 +16,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
-# Explicitly document the port Django will run on
 EXPOSE 8000
 
-# Explicitly bind Django to port 8000 on all interfaces
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "messaging_app.asgi:application"]
