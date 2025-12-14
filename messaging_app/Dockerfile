@@ -5,7 +5,6 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# OS dependencies for building mysqlclient (and common Python packages)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     default-libmysqlclient-dev \
@@ -17,6 +16,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
+# Explicitly document the port Django will run on
 EXPOSE 8000
 
+# Explicitly bind Django to port 8000 on all interfaces
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
