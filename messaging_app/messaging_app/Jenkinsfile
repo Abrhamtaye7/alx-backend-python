@@ -6,7 +6,6 @@ pipeline {
             steps {
                 git(
                     url: 'https://github.com/YOUR_GITHUB_USERNAME/alx-backend-python.git',
-                    branch: 'main',
                     credentialsId: 'github-creds'
                 )
             }
