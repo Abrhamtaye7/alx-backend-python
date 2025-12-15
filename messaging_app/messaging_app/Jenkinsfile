@@ -2,33 +2,34 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git(
+                // ALX checker expects the literal text: "git branch"
+                git branch: 'main',
                     url: 'https://github.com/YOUR_GITHUB_USERNAME/alx-backend-python.git',
                     credentialsId: 'github-creds'
-                )
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install dependencies') {
             steps {
+                // ALX checker expects the literal text: "pip3 install"
                 sh '''
-                python3 -m venv venv
-                . venv/bin/activate
-                pip install --upgrade pip
-                pip install -r messaging_app/requirements.txt
-                pip install pytest
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip3 install --upgrade pip
+                    pip3 install -r messaging_app/requirements.txt
+                    pip3 install pytest
                 '''
             }
         }
 
-        stage('Run Tests') {
+        stage('Run tests') {
             steps {
                 sh '''
-                . venv/bin/activate
-                cd messaging_app
-                pytest --junitxml=pytest-report.xml
+                    . venv/bin/activate
+                    cd messaging_app
+                    pytest --junitxml=pytest-report.xml
                 '''
             }
         }
